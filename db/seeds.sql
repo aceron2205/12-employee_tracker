@@ -20,16 +20,16 @@ VALUES
     (5, 'Accountant', 4000.00, 2),
     (6, 'Comptroller', 8000.00, 2),
     (7, 'Lawyer', 4000.00, 3),
-    (8, 'Paralegal', 40000, 3),
+    (8, 'Paralegal', 40000.00, 3),
     (9, 'HR Manager', 4000.00, 6),
     (10, 'HR Assistant', 4000.00, 6);
 
 -- Insert employees --
 INSERT INTO employee (employee_id, first_name, last_name, role_id, manager_id)
 VALUES 
-    (1, 'Elizabeth', 'Jones', 9, NULL),
-    (2, 'Mike', 'Sanchez', 6, NULL),
-    (3, 'Austreberto', 'Gomez', 2, 3),
-    (4, 'William', 'Hamilton', 4, 3),
-    (5, 'Jasper', 'Alexander', 8, 7),
-    (6, 'Cesar', 'Gonzalez', 5, 6);
+    (1, 'Elizabeth', 'Jones', 9, NULL), 
+    (2, 'Mike', 'Sanchez', 6, NULL),    
+    (3, 'Austreberto', 'Gomez', 2, 1),  
+    (4, 'William', 'Hamilton', 4, 1),   
+    (5, 'Jasper', 'Alexander', 8, 7),   
+    (6, 'Cesar', 'Gonzalez', 5, 2);     
