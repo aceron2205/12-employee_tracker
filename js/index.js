@@ -8,7 +8,7 @@ app.use(express.json());
 
 const db = mysql.createConnection({
   host: "localhost",
-  user: "",
+  user: "root",
   password: "",
   database: "employees_db",
 });
@@ -111,7 +111,6 @@ function viewAllEmployees() {
   });
 }
 
-
 function viewAllRoles() {
   const query = `
     SELECT 
@@ -125,7 +124,7 @@ function viewAllRoles() {
 
   db.query(query, function (err, results) {
     if (err) {
-      console.error('Error fetching roles:', err);
+      console.error("Error fetching roles:", err);
       return;
     }
 
@@ -135,7 +134,6 @@ function viewAllRoles() {
     runQuestions();
   });
 }
-
 
 function viewAllDepartments() {
   db.query("SELECT * FROM department", function (err, results) {
@@ -157,26 +155,26 @@ function addDepartment() {
     ])
     .then((answer) => {
       const departmentName = answer.newDepartment;
-      const query = "INSERT IGNORE INTO department(department_name) VALUES (?);";
-      
+      const query =
+        "INSERT IGNORE INTO department(department_name) VALUES (?);";
+
       db.query(query, [departmentName], (err, results) => {
-          if (err) {
-            console.log("An error occured:", err);
-            runQuestions();
-            return;
-          }
-
-          if (results.affectedRows === 0) {
-            console.log(`${departmentName} already exists.`);
-          } else {
-            console.log(`${departmentName} was added successfully`);
-          }
-
+        if (err) {
+          console.log("An error occured:", err);
           runQuestions();
+          return;
+        }
+
+        if (results.affectedRows === 0) {
+          console.log(`${departmentName} already exists.`);
+        } else {
+          console.log(`${departmentName} was added successfully`);
+        }
+
+        runQuestions();
       });
     });
 }
-
 
 function addRole() {
   inquirer
@@ -201,7 +199,8 @@ function addRole() {
     .then((answer) => {
       const { roleName, roleSalary, roleDpt } = answer;
 
-      const query = "INSERT IGNORE INTO role(title, salary, department_id) VALUES (?, ?, ?);"; 
+      const query =
+        "INSERT IGNORE INTO role(title, salary, department_id) VALUES (?, ?, ?);";
       db.query(query, [roleName, roleSalary, roleDpt], (err, results) => {
         if (err) {
           console.log("An error occurred:", err);
@@ -212,14 +211,15 @@ function addRole() {
         if (results.affectedRows === 0) {
           console.log(`${roleName} already exists.`);
         } else {
-          console.log(`${roleName} was successfully added with a salary of $${roleSalary} in the ${roleDpt} department.`);
+          console.log(
+            `${roleName} was successfully added with a salary of $${roleSalary} in the ${roleDpt} department.`
+          );
         }
 
         runQuestions();
       });
     });
 }
-
 
 function addEmployee() {
   let roleChoices = [];
@@ -231,59 +231,73 @@ function addEmployee() {
       return;
     }
 
-    roleChoices = roleResults.map(role => ({ name: role.title, value: role.role_id }));
+    roleChoices = roleResults.map((role) => ({
+      name: role.title,
+      value: role.role_id,
+    }));
 
-    db.query("SELECT employee_id, first_name, last_name FROM employee", (err, employeeResults) => {
-      if (err) {
-        console.error("Error fetching employees:", err);
-        return;
-      }
+    db.query(
+      "SELECT employee_id, first_name, last_name FROM employee",
+      (err, employeeResults) => {
+        if (err) {
+          console.error("Error fetching employees:", err);
+          return;
+        }
 
-      managerChoices = [
-        { name: "None", value: null },
-        ...employeeResults.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.employee_id }))
-      ];
+        managerChoices = [
+          { name: "None", value: null },
+          ...employeeResults.map((employee) => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.employee_id,
+          })),
+        ];
 
-      inquirer
-        .prompt([
-          {
-            type: "input",
-            name: "first_name",
-            message: "Enter the first name of the employee:",
-          },
-          {
-            type: "input",
-            name: "last_name",
-            message: "Enter the last name of the employee:",
-          },
-          {
-            type: "list",
-            name: "role_id",
-            message: "Select the role of the employee:",
-            choices: roleChoices,
-          },
-          {
-            type: "list",
-            name: "manager_id",
-            message: "Select the manager of the employee:",
-            choices: managerChoices,
-          },
-        ])
-        .then((answer) => {
-          const { first_name, last_name, role_id, manager_id } = answer;
-          const values = [first_name, last_name, role_id, manager_id];
-          const query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "first_name",
+              message: "Enter the first name of the employee:",
+            },
+            {
+              type: "input",
+              name: "last_name",
+              message: "Enter the last name of the employee:",
+            },
+            {
+              type: "list",
+              name: "role_id",
+              message: "Select the role of the employee:",
+              choices: roleChoices,
+            },
+            {
+              type: "list",
+              name: "manager_id",
+              message: "Select the manager of the employee:",
+              choices: managerChoices,
+            },
+          ])
+          .then((answer) => {
+            const { first_name, last_name, role_id, manager_id } = answer;
+            const values = [first_name, last_name, role_id, manager_id];
+            const query =
+              "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
 
-          db.query(query, values, (error, results) => {
-            if (error) {
-              console.error("Error occurred while adding the employee:", error);
-              return runQuestions();
-            }
-            console.log(`New employee, ${first_name} ${last_name}, has been added successfully!`);
-            runQuestions();
+            db.query(query, values, (error, results) => {
+              if (error) {
+                console.error(
+                  "Error occurred while adding the employee:",
+                  error
+                );
+                return runQuestions();
+              }
+              console.log(
+                `New employee, ${first_name} ${last_name}, has been added successfully!`
+              );
+              runQuestions();
+            });
           });
-        });
-    });
+      }
+    );
   });
 }
-
